@@ -47,6 +47,8 @@ def create_quote(author_id):
 def edit_quote(quote_id):
     quote_data = request.json
     quote = QuoteModel.query.get(quote_id)
+    if quote is None :
+        return {"Error":f"Quote with id={quote_id} not fount"}, 404
     quote.text = quote_data["text"]
     db.session.commit()
     return quote.to_dict(), 200
@@ -54,4 +56,10 @@ def edit_quote(quote_id):
 
 @app.route('/quotes/<int:quote_id>', methods=["DELETE"])
 def delete_quote(quote_id):
-    raise NotImplemented("Метод не реализован")
+    quote = QuoteModel.query.get(quote_id)
+
+    if quote is None :
+        return {"Error":f"Quote with id={quote_id} not fount"}, 404
+    db.session.delete(quote)
+    db.session.commit()
+    return {'message':f"Quote with id={quote_id} has deleted"}, 200
